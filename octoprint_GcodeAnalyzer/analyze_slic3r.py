@@ -21,6 +21,7 @@ TIME_UNITS_TO_SECONDS = defaultdict(
         "day": 24*60*60,
         "days": 24*60*60,
     })
+
 def process_time_text(time_text):
   """Given a string like "5 minutes, 4 seconds + 82 hours" return the total in seconds"""
   total = 0
@@ -29,7 +30,6 @@ def process_time_text(time_text):
     units = TIME_UNITS_TO_SECONDS[time_part.group(2)]
     total += quantity * units
   return total
-
 
 def get_analysis_from_gcode(machinecode_path):
   """Extracts the analysis data structure from the gocde.
@@ -58,8 +58,8 @@ def get_analysis_from_gcode(machinecode_path):
 	  m = re.match('\s*;\s*filament used\s*\[cm3\]\s*=\s*([, 0-9.]+)\s*', gcode_line)
       if m:
         filament_length = [float(x) for x in m.group(1).split(", ")]
-  
-	  #inclusive to PrusaSlicer 2.0.0 Formating only capturing "Normal Mode"
+    
+      #inclusive to PrusaSlicer 2.0.0 Formating only capturing "Normal Mode"
       m = re.match('\s*;\s*estimated printing time\s*(?:\(normal mode\)\s*)?=\s(.*)\s*', gcode_line)
       if m:
         printing_seconds = process_time_text(m.group(1))
