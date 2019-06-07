@@ -31,9 +31,10 @@ def process_time_text(time_text):
     total += quantity * units
   return total
 
+
 def get_analysis_from_gcode(machinecode_path):
   """Extracts the analysis data structure from the gocde.
-  
+
   The analysis structure should look like this:
   http://docs.octoprint.org/en/master/modules/filemanager.html#octoprint.filemanager.analysis.GcodeAnalysisQueue
   (There is a bug in the documentation, estimatedPrintTime should be in seconds.)
@@ -53,12 +54,12 @@ def get_analysis_from_gcode(machinecode_path):
       #PrusaSlicer 2.0.0 Formating for length in mm
       m = re.match('\s*;\s*filament used\s*\[mm\]\s*=\s*([, 0-9.]+)\s*', gcode_line)
       if m:
-	    filament_length = [float(x) for x in m.group(1).split(", ")]
+        filament_length = [float(x) for x in m.group(1).split(", ")]
       #PrusaSlicer 2.0.0 Formating for volume in cm3
-	  m = re.match('\s*;\s*filament used\s*\[cm3\]\s*=\s*([, 0-9.]+)\s*', gcode_line)
+      m = re.match('\s*;\s*filament used\s*\[cm3\]\s*=\s*([, 0-9.]+)\s*', gcode_line)
       if m:
         filament_length = [float(x) for x in m.group(1).split(", ")]
-    
+
       #inclusive to PrusaSlicer 2.0.0 Formating only capturing "Normal Mode"
       m = re.match('\s*;\s*estimated printing time\s*(?:\(normal mode\)\s*)?=\s(.*)\s*', gcode_line)
       if m:
@@ -72,10 +73,14 @@ def get_analysis_from_gcode(machinecode_path):
     if printing_seconds is not None:
       analysis['estimatedPrintTime'] = printing_seconds
     if filament_length is not None:
-	  for x in len(filament_length)
-	    analysis['filament']['tool' + str(x)]['length'] = filament_length
+      x = 0
+      while x < len(filament_length):
+        analysis['filament']['tool' + str(x)]['length'] = filament_length
+        x += 1
     if filament_volume is not None:
-	  for x in len(filament_volume)
+      x = 0
+      while x < len(filament_length):
         analysis['filament']['tool' + str(x)]['volume'] = filament_volume
+        x += 1
     return json.loads(json.dumps(analysis)) # We need to be strict about our return type, unfortunately.
   return None
